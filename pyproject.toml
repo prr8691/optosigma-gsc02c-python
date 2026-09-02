@@ -4,12 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "optosigma-gsc02c"
-version = "0.1.1"
-description = "Commented Python driver for the OptoSigma GSC-02C"
-requires-python = ">=3.9"
+version = "0.2.0"
+description = "Python driver and desktop UI for the OptoSigma GSC-02C delay-stage controller"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
 dependencies = [
-    "pyserial>=3.5",
+    "pyserial>=3.5,<4",
 ]
+
+[project.scripts]
+gsc02c-ui = "optosigma_gsc02c.gui:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
