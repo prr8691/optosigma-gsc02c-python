@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 
-import serial
+try:
+    import serial
+except ImportError:  # Simulation mode can still run before pyserial is installed.
+    serial = None
 
 
 class GSC02CError(RuntimeError):
@@ -113,7 +116,7 @@ class GSC02C:
         self.config = config
 
         # This will hold the pyserial connection after connect() is called.
-        self.ser: Optional[serial.Serial] = None
+        self.ser: Optional[Any] = None
 
     # ------------------------------------------------------------------
     # CONNECTION
@@ -127,6 +130,11 @@ class GSC02C:
         # If already connected, do nothing.
         if self.ser is not None and self.ser.is_open:
             return
+
+        if serial is None:
+            raise GSC02CError(
+                "pyserial is required for Hardware mode. Run `uv sync` first."
+            )
 
         # These serial settings match the OptoSigma sample program:
         # 9600 baud, 8 data bits, no parity, 1 stop bit, RTS/CTS handshaking.
@@ -165,7 +173,7 @@ class GSC02C:
         """
         self.close()
 
-    def _require_connection(self) -> serial.Serial:
+    def _require_connection(self) -> Any:
         """
         Internal helper that makes sure the controller is connected.
 
